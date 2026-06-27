@@ -19,7 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl implements NMSServerGamePacketListener {
+public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerImpl
+        implements NMSServerGamePacketListener {
 
     private final FakeplayerManager manager = Main.getInjector().getInstance(FakeplayerManager.class);
 
@@ -27,8 +28,7 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
             @NotNull MinecraftServer server,
             @NotNull Connection connection,
             @NotNull ServerPlayer player,
-            @NotNull CommonListenerCookie cookie
-    ) {
+            @NotNull CommonListenerCookie cookie) {
         super(server, connection, player, cookie);
         Optional.ofNullable(Bukkit.getPlayer(player.getUUID()))
                 .map(CraftPlayer.class::cast)
@@ -64,6 +64,17 @@ public class FakeServerGamePacketListenerImpl extends ServerGamePacketListenerIm
         }
 
         recipient.sendPluginMessage(Main.getInstance(), BUNGEE_CORD_CHANNEL, message);
+    }
+
+    @Override
+    public void disconnect(net.minecraft.network.chat.Component reason) {
+        this.connection.disconnect(reason);
+        this.onDisconnect(reason);
+
+    @Override
+    public void disconnect(net.minecraft.network.DisconnectionDetails details) {
+        this.connection.disconnect(details);
+        this.onDisconnect(details);
     }
 
 }
